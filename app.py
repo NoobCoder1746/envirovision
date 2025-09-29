@@ -124,14 +124,10 @@ st.markdown(
 )
 
 #layout
-st.title("♻️ EnviroVision - AI phân loại rác")
-
-uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
-
-conf_threshold = st.slider("🔧 Ngưỡng độ tin cậy (Càng thấp thì mô hình sẽ nhận diện được nhiều hơn nhưng độ chính xác giảm dần)", 0.1, 0.9, 0.3, 0.05)
-
-if uploaded_file is not None:
-    image = Image.open(uploaded_file).convert("RGB")
+st.title("♻️ EnviroVision - AI phân loại rác") uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"]) 
+conf_threshold = st.slider("🔧 Ngưỡng độ tin cậy (Càng thấp thì mô hình sẽ nhận diện được nhiều hơn nhưng độ chính xác giảm dần)", 0.1, 0.9, 0.3, 0.05) 
+if uploaded_file is not None: 
+    image = Image.open(uploaded_file).convert("RGB") 
     st.image(image, caption="Ảnh gốc", use_column_width=True)
 
 st.markdown(
@@ -205,3 +201,12 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+if st.button("🚀 Chạy nhận diện"): 
+    with st.spinner("⚙️ Đang xử lý..."): 
+        result_img, results = detect_and_classify(image, conf_threshold) 
+        st.image(result_img, caption="Kết quả nhận diện", use_column_width=True) 
+        
+        st.subheader("📊 Kết quả phân loại:") 
+        for label, conf, _ in results: 
+            st.write(f"**{label}** - Độ tin cậy: {conf:.2f}")
