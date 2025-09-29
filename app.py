@@ -102,54 +102,75 @@ def get_base64_of_bin_file(bin_file):
 background_path = "Screenshot 2025-09-29 at 16.18.53.png"  
 base64_bg = get_base64_of_bin_file(background_path)
 
-# --- Upload UI ---
 st.markdown(
-    """
+    f"""
     <style>
-    /* Ẩn toàn bộ khung mặc định */
-    .stFileUploader {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .stFileUploader div div {
-        display: none !important;
-    }
+    .stApp {{
+        background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+                    url("data:image/png;base64,{base64_bg}");
+        background-size: cover;
+        background-attachment: fixed;
+        color: white;
+    }}
 
-    /* Giữ lại button Browse files */
-    .stFileUploader button {
-        display: block !important;
+    h1 {{
+        color: #00e676;
+        text-align: center;
+        font-weight: 900;
+        text-shadow: 2px 2px 5px black;
+    }}
+
+    /* Uploader box */
+    .stFileUploader div div span {{
+        display: none !important; /* Ẩn chữ tiếng Anh mặc định */
+    }}
+    .stFileUploader div div {{
+        background-color: rgba(0,0,0,0.6) !important;
+        border: 2px dashed #00e676 !important;
+        border-radius: 12px;
+        text-align: center;
+        color: white !important;
+        padding: 14px;
+    }}
+
+    /* Nút "Chọn tệp" */
+    .stFileUploader button {{
         background-color: #00c853 !important;
         color: white !important;
         font-weight: bold !important;
-        border-radius: 10px !important;
+        border-radius: 8px !important;
         border: none !important;
-        padding: 10px 25px !important;
-        box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
-        margin-top: 10px;
-    }
-    .stFileUploader button:hover {
+        padding: 6px 16px !important;
+        box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
+    }}
+    .stFileUploader button:hover {{
         background-color: #00e676 !important;
         color: black !important;
-    }
+    }}
 
-    /* Căn giữa tiêu đề upload */
-    .upload-label {
-        text-align: center;
-        font-size: 18px;
+    /* Slider */
+    .stSlider label, .stSlider span {{
+        color: white !important;
+        font-weight: bold;
+    }}
+
+    /* Buttons */
+    .stButton>button {{
+        background-color: #00c853;
         color: white;
         font-weight: bold;
-        margin-bottom: 10px;
-    }
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+    }}
+    .stButton>button:hover {{
+        background-color: #00e676;
+        color: black;
+    }}
     </style>
     """,
     unsafe_allow_html=True
 )
-
-st.markdown('<div class="upload-label">📸 Tải hình ảnh lên</div>', unsafe_allow_html=True)
-
-uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
-
 
 # =====================
 # App Layout
