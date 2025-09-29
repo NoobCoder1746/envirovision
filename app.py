@@ -108,12 +108,27 @@ base64_bg = get_base64_of_bin_file(background_path)
 st.markdown(
     f"""
     <style>
+    /* Ẩn menu, footer, GitHub icon */
+    #MainMenu {{visibility: hidden;}}
+    footer {{visibility: hidden;}}
+    header {{visibility: hidden;}}
+
     .stApp {{
         background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
                     url("data:image/png;base64,{base64_bg}");
         background-size: cover;
         background-attachment: fixed;
-        color: white;
+        font-family: 'Montserrat', sans-serif;
+    }}
+
+    /* Card container */
+    .block-container {{
+        background: rgba(0,0,0,0.55);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+        max-width: 750px;
+        margin: auto;
     }}
 
     h1 {{
@@ -123,12 +138,40 @@ st.markdown(
         text-shadow: 2px 2px 5px black;
     }}
 
+    /* File uploader */
+    .stFileUploader label {{
+        color: white !important;
+        font-weight: bold;
+        text-align: center;
+    }}
+    .stFileUploader div div {{
+        background-color: rgba(0,0,0,0.6) !important;
+        border: 2px dashed #00e676 !important;
+        border-radius: 12px;
+        text-align: center;
+        color: white !important;
+    }}
+
     /* Slider */
     .stSlider label, .stSlider span {{
         color: white !important;
         font-weight: bold;
     }}
 
+    /* Nút xanh */
+    div.stButton > button:first-child {{
+        background-color: #00c853;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+        border: none;
+        padding: 10px 20px;
+        box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
+    }}
+    div.stButton > button:first-child:hover {{
+        background-color: #00e676;
+        color: black;
+    }}
     </style>
     """,
     unsafe_allow_html=True
