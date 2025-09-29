@@ -206,7 +206,7 @@ st.markdown(
 if st.button("Chạy nhận diện"): 
     with st.spinner("⚙️ Đang xử lý..."): 
         result_img, results = detect_and_classify(image, conf_threshold) 
-        st.image(result_img, caption="Kết quả nhận diện", use_column_width=True) 
+        st.image(result_img, caption="Kết quả nhận diện", use_container_width=True) 
         
         st.subheader("Kết quả phân loại:") 
         for label, conf, _ in results: 
