@@ -90,53 +90,71 @@ def get_base64_of_bin_file(bin_file):
 background_path = "Screenshot 2025-09-29 at 16.18.53.png"  
 base64_bg = get_base64_of_bin_file(background_path)
 
-st.markdown(
-    f"""
-    <style>
-    .stApp {{
-        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                    url("data:image/jpg;base64,{base64_bg}");
-        background-size: cover;
-        background-attachment: fixed;
-        color: white;
-    }}
+<style>
+.stApp {
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                url("data:image/jpg;base64,{base64_bg}");
+    background-size: cover;
+    background-attachment: fixed;
+    color: white;
+}
 
-    h1 {{
-        color: #00e676;
-        text-align: center;
-        font-weight: 900;
-        text-shadow: 2px 2px 5px black;
-    }}
+/* Tiêu đề */
+h1 {
+    color: #00e676;
+    text-align: center;
+    font-weight: 900;
+    text-shadow: 2px 2px 5px black;
+}
 
-    /* File uploader */
-    .stFileUploader div div span {{
-        display: none !important; /* Ẩn chữ tiếng Anh mặc định */
-    }}
-    .stFileUploader div div {{
-        background-color: rgba(0,0,0,0.5) !important;
-        border: 2px dashed #00e676 !important;
-        border-radius: 10px;
-        text-align: center;
-        color: white !important;
-    }}
+/* Uploader box */
+.stFileUploader div div span {
+    display: none !important; /* Ẩn chữ "Drag and drop file here" */
+}
+.stFileUploader div div {
+    background-color: rgba(0,0,0,0.6) !important;
+    border: 2px dashed #00e676 !important;
+    border-radius: 12px;
+    text-align: center;
+    color: white !important;
+    padding: 12px;
+}
 
-    /* Buttons */
-    .stButton>button {{
-        background-color: #00c853;
-        color: white;
-        font-weight: bold;
-        border-radius: 12px;
-        border: none;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
-    }}
-    .stButton>button:hover {{
-        background-color: #00e676;
-        color: black;
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+/* Nút "Chọn tệp" */
+.stFileUploader button {
+    background-color: #00c853 !important;
+    color: white !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    border: none !important;
+    padding: 6px 16px !important;
+    box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
+}
+.stFileUploader button:hover {
+    background-color: #00e676 !important;
+    color: black !important;
+}
+
+/* Slider text */
+.stSlider label, .stSlider span {
+    color: white !important;
+    font-weight: bold;
+}
+
+/* Buttons */
+.stButton>button {
+    background-color: #00c853;
+    color: white;
+    font-weight: bold;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+}
+.stButton>button:hover {
+    background-color: #00e676;
+    color: black;
+}
+</style>
 
 st.title("♻️ EnviroVision - AI phân loại rác")
 
