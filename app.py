@@ -10,20 +10,13 @@ from huggingface_hub import hf_hub_download
 import base64
 
 
-#MainMenu, header, footer {visibility: hidden !important;}
-
-# =====================
-# Load YOLO model
-# =====================
+#load models
 yolo_model_path = hf_hub_download(
     repo_id="Noob1746/EnviroVision",
     filename="best.pt"
 )
 yolo_model = YOLO(yolo_model_path)
 
-# =====================
-# Load ResNet18 classification model
-# =====================
 num_classes = 10
 classification_model = models.resnet18()
 num_ftrs = classification_model.fc.in_features
@@ -43,9 +36,7 @@ class_names = [
     'green-glass', 'metal', 'paper', 'plastic', 'trash', 'white-glass'
 ]
 
-# =====================
-# Preprocess
-# =====================
+
 def preprocess_image(image):
     transform = transforms.Compose([
         transforms.ToPILImage(),
@@ -56,9 +47,7 @@ def preprocess_image(image):
     ])
     return transform(image).unsqueeze(0)
 
-# =====================
-# Detection + Classification
-# =====================
+
 def detect_and_classify(image, conf_threshold):
     img = np.array(image)
     img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
@@ -91,16 +80,16 @@ def detect_and_classify(image, conf_threshold):
     img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
     return img_rgb, final_results
 
-# =====================
-# Streamlit UI
-# =====================
+
+#streamlit ui
 st.set_page_config(page_title="EnviroVision", page_icon="♻️", layout="centered")
 
-# Custom background
+
 def get_base64_of_bin_file(bin_file):
     with open(bin_file, 'rb') as f:
         data = f.read()
     return base64.b64encode(data).decode()
+
 
 background_path = "realfish-Kh8aGCgWZLg-unsplash.jpg"  
 base64_bg = get_base64_of_bin_file(background_path)
@@ -134,10 +123,16 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# =====================
-# App Layout
-# =====================
+#layout
 st.title("♻️ EnviroVision - AI phân loại rác")
+
+uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
+
+conf_threshold = st.slider("🔧 Ngưỡng độ tin cậy (Càng thấp thì mô hình sẽ nhận diện được nhiều hơn nhưng độ chính xác giảm dần)", 0.1, 0.9, 0.3, 0.05)
+
+if uploaded_file is not None:
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Ảnh gốc", use_column_width=True)
 
 st.markdown(
     f"""
