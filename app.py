@@ -143,10 +143,6 @@ st.markdown(
         padding: 6px 16px !important;
         box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
     }}
-    .stFileUploader button:hover {{
-        background-color: #00e676 !important;
-        color: black !important;
-    }}
 
     /* Slider */
     .stSlider label, .stSlider span {{
@@ -154,15 +150,6 @@ st.markdown(
         font-weight: bold;
     }}
 
-    /* Buttons */
-    .stButton>button {{
-        background-color: #00c853;
-        color: white;
-        font-weight: bold;
-        border-radius: 12px;
-        border: none;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
-    }}
     </style>
     """,
     unsafe_allow_html=True
