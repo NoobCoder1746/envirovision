@@ -120,30 +120,6 @@ st.markdown(
         text-shadow: 2px 2px 5px black;
     }}
 
-    /* Uploader box */
-    .stFileUploader div div span {{
-        display: none !important; /* Ẩn chữ tiếng Anh mặc định */
-    }}
-    .stFileUploader div div {{
-        background-color: rgba(0,0,0,0.6) !important;
-        border: 2px dashed #00e676 !important;
-        border-radius: 12px;
-        text-align: center;
-        color: white !important;
-        padding: 14px;
-    }}
-
-    /* Nút "Chọn tệp" */
-    .stFileUploader button {{
-        background-color: #00c853 !important;
-        color: white !important;
-        font-weight: bold !important;
-        border-radius: 8px !important;
-        border: none !important;
-        padding: 6px 16px !important;
-        box-shadow: 0px 3px 6px rgba(0,0,0,0.3);
-    }}
-
     /* Slider */
     .stSlider label, .stSlider span {{
         color: white !important;
