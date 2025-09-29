@@ -144,9 +144,31 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file).convert("RGB")
     st.image(image, caption="Ảnh gốc", use_column_width=True)
 
-    if st.button("🚀 Chạy nhận diện"):
-        with st.spinner("⚙️ Đang xử lý..."):
-            result_img, results = detect_and_classify(image, conf_threshold)
+st.markdown(
+    """
+    <style>
+    div.stButton > button:first-child {
+        background-color: #00c853;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+        border: none;
+        padding: 10px 20px;
+        box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
+    }
+    div.stButton > button:first-child:hover {
+        background-color: #00e676;
+        color: black;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Nút
+if st.button("🚀 Chạy nhận diện"):
+    with st.spinner("⚙️ Đang xử lý..."):
+        result_img, results = detect_and_classify(image, conf_threshold)
 
         st.image(result_img, caption="Kết quả nhận diện", use_column_width=True)
 
