@@ -129,7 +129,7 @@ uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
 conf_threshold = st.slider("🔧 Ngưỡng độ tin cậy (Càng thấp thì mô hình sẽ nhận diện được nhiều hơn nhưng độ chính xác giảm dần)", 0.1, 0.9, 0.3, 0.05) 
 if uploaded_file is not None: 
     image = Image.open(uploaded_file).convert("RGB") 
-    st.image(image, caption="Ảnh gốc", use_column_width=True)
+    st.image(image, caption="Ảnh gốc", use_container_width=True)
 
 st.markdown(
     f"""
