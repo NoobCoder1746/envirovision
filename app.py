@@ -8,12 +8,14 @@ import numpy as np
 from PIL import Image
 from huggingface_hub import hf_hub_download
 
+# --- Load YOLO model ---
 yolo_model_path = hf_hub_download(
     repo_id="Noob1746/EnviroVision",
     filename="best.pt"
 )
 yolo_model = YOLO(yolo_model_path)
 
+# --- Load ResNet18 classification model ---
 num_classes = 10
 classification_model = models.resnet18()
 num_ftrs = classification_model.fc.in_features
@@ -26,13 +28,12 @@ resnet_model_path = hf_hub_download(
 classification_model.load_state_dict(torch.load(resnet_model_path, map_location=torch.device("cpu")))
 classification_model.eval()
 
-
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 class_names = ['battery', 'biological', 'brown-glass', 'cardboard',
                'green-glass', 'metal', 'paper', 'plastic', 'trash', 'white-glass']
 
-
+# --- Preprocess function ---
 def preprocess_image(image):
     transform = transforms.Compose([
         transforms.ToPILImage(),
@@ -43,12 +44,12 @@ def preprocess_image(image):
     ])
     return transform(image).unsqueeze(0)
 
-
-def detect_and_classify(image):
+# --- Detection + Classification ---
+def detect_and_classify(image, conf_threshold):
     img = np.array(image)
     img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
-    results = yolo_model(img, conf=0.2)
+    results = yolo_model(img, conf=conf_threshold)
 
     final_results = []
     for result in results:
@@ -76,22 +77,45 @@ def detect_and_classify(image):
     img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
     return img_rgb, final_results
 
+# --- Streamlit UI ---
+st.set_page_config(page_title="EnviroVision", page_icon="♻️", layout="centered")
 
-st.title("♻️ EnviroVision - Smart Waste Classification")
+# Custom background CSS
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        color: white;
+    }
+    .stButton>button {
+        background-color: #00c853;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+st.title("♻️ EnviroVision - AI phân loại rác")
+
+uploaded_file = st.file_uploader("📸 Tải hình ảnh lên", type=["jpg", "jpeg", "png"])
+
+# Confidence slider
+conf_threshold = st.slider("🔧 Confidence threshold", 0.1, 0.9, 0.3, 0.05)
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Ảnh gốc", use_column_width=True)
 
-    st.image(image, caption="Uploaded Image", use_column_width=True)
+    if st.button("🚀 Run Detection"):
+        with st.spinner("⚙️ Đang xử lý..."):
+            result_img, results = detect_and_classify(image, conf_threshold)
 
-    if st.button("Run Detection"):
-        with st.spinner("Processing..."):
-            result_img, results = detect_and_classify(image)
+        st.image(result_img, caption="Kết quả nhận diện", use_column_width=True)
 
-        st.image(result_img, caption="Detection Result", use_column_width=True)
-
-        st.subheader("Classification Results:")
+        st.subheader("📊 Kết quả phân loại:")
         for label, conf, _ in results:
             st.write(f"**{label}** - Confidence: {conf:.2f}")
