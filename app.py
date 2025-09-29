@@ -190,9 +190,52 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file).convert("RGB")
     st.image(image, caption="Ảnh gốc", use_column_width=True)
 
+# =====================
+# App Layout
+# =====================
+st.title("♻️ EnviroVision - AI phân loại rác")
+
 st.markdown(
     """
     <style>
+    /* Card container */
+    .main-card {
+        background: rgba(0,0,0,0.55);
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0px 8px 20px rgba(0,0,0,0.4);
+        text-align: center;
+        margin: auto;
+        width: 60%;
+    }
+
+    /* File uploader */
+    .stFileUploader div div span {
+        display: none !important; /* Ẩn chữ drag & drop */
+    }
+    .stFileUploader {
+        text-align: center;
+    }
+    .stFileUploader button {
+        background-color: #00c853 !important;
+        color: white !important;
+        font-weight: bold;
+        border-radius: 8px !important;
+        padding: 8px 20px !important;
+        border: none !important;
+    }
+    .stFileUploader button:hover {
+        background-color: #00e676 !important;
+        color: black !important;
+    }
+
+    /* Slider text */
+    .stSlider label, .stSlider span {
+        color: white !important;
+        font-weight: bold;
+    }
+
+    /* Button */
     div.stButton > button:first-child {
         background-color: #00c853;
         color: white;
@@ -200,24 +243,36 @@ st.markdown(
         border-radius: 10px;
         border: none;
         padding: 10px 20px;
+        transition: 0.2s;
         box-shadow: 0px 4px 8px rgba(0,0,0,0.3);
     }
     div.stButton > button:first-child:hover {
         background-color: #00e676;
         color: black;
+        transform: scale(1.05);
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Nút
+# UI block
+st.markdown('<div class="main-card">', unsafe_allow_html=True)
+
+uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
+conf_threshold = st.slider("🔧 Ngưỡng độ tin cậy", 0.1, 0.9, 0.3, 0.05)
+
+if uploaded_file is not None:
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Ảnh gốc", use_column_width=True)
+
 if st.button("🚀 Chạy nhận diện"):
     with st.spinner("⚙️ Đang xử lý..."):
         result_img, results = detect_and_classify(image, conf_threshold)
 
-        st.image(result_img, caption="Kết quả nhận diện", use_column_width=True)
+    st.image(result_img, caption="Kết quả nhận diện", use_column_width=True)
+    st.subheader("📊 Kết quả phân loại:")
+    for label, conf, _ in results:
+        st.write(f"**{label}** - Độ tin cậy: {conf:.2f}")
 
-        st.subheader("📊 Kết quả phân loại:")
-        for label, conf, _ in results:
-            st.write(f"**{label}** - Độ tin cậy: {conf:.2f}")
+st.markdown('</div>', unsafe_allow_html=True)
