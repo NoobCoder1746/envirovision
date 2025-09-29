@@ -93,35 +93,61 @@ base64_bg = get_base64_of_bin_file(background_path)
 st.markdown(
     f"""
     <style>
+    /* Background with dark overlay */
     .stApp {{
-        background: url("data:image/jpg;base64,{base64_bg}");
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                    url("data:image/jpg;base64,{base64_bg}");
         background-size: cover;
         background-attachment: fixed;
         color: white;
     }}
+    
+    /* Title */
+    .stMarkdown h1 {{
+        color: #00e676;
+        text-align: center;
+        font-weight: 900;
+        text-shadow: 2px 2px 5px black;
+    }}
+    
+    /* File uploader */
+    .stFileUploader label {{
+        color: #ffffff !important;
+        font-weight: bold;
+    }}
+    .stFileUploader div div {{
+        background-color: rgba(0,0,0,0.5) !important;
+        border: 2px dashed #00e676 !important;
+        color: white !important;
+        border-radius: 10px;
+    }}
+    
+    /* Slider */
+    .stSlider [role=radiogroup] {{
+        color: white !important;
+    }}
+    .stSlider .css-1n76uvr, .stSlider .css-14xtw13 {{
+        color: #00e676 !important;
+    }}
+    
+    /* Buttons */
     .stButton>button {{
         background-color: #00c853;
         color: white;
         font-weight: bold;
-        border-radius: 10px;
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
     }}
-    .stFileUploader label {{
-        color: white !important;
-    }}
-    .stFileUploader div div {{
-        background-color: black !important;
-        color: white !important;
-        border-radius: 8px;
-        border: 1px solid #00c853;
-    }}
-    .stFileUploader div div::after {{
-        content: "Chọn tệp" !important;
-        color: white !important;
+    .stButton>button:hover {{
+        background-color: #00e676;
+        color: black;
     }}
     </style>
     """,
     unsafe_allow_html=True
 )
+
 
 st.title("♻️ EnviroVision - AI phân loại rác")
 
