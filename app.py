@@ -136,7 +136,7 @@ st.markdown(
 # =====================
 st.title("♻️ EnviroVision - AI phân loại rác")
 
-uploaded_file = st.file_uploader("📸 **Tải hình ảnh lên**", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
 
 conf_threshold = st.slider("🔧 Ngưỡng độ tin cậy (Càng thấp thì mô hình sẽ nhận diện được nhiều hơn nhưng độ chính xác giảm dần)", 0.1, 0.9, 0.3, 0.05)
 
