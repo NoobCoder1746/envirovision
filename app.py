@@ -73,7 +73,7 @@ def detect_and_classify(image, conf_threshold):
 
             final_results.append((label, conf_score, (x1, y1, x2, y2)))
 
-            v2.rectangle(img_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2) 
+            cv2.rectangle(img_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2) 
             cv2.putText(img_bgr, f"{label} {conf_score:.2f}", (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
 
