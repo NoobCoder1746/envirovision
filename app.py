@@ -7,6 +7,7 @@ from ultralytics import YOLO
 import numpy as np
 from PIL import Image
 from huggingface_hub import hf_hub_download
+import base64
 
 # --- Load YOLO model ---
 yolo_model_path = hf_hub_download(
@@ -80,20 +81,43 @@ def detect_and_classify(image, conf_threshold):
 # --- Streamlit UI ---
 st.set_page_config(page_title="EnviroVision", page_icon="♻️", layout="centered")
 
-# Custom background CSS
+# --- Encode background.jpg thành base64 để dùng làm CSS ---
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+background_path = "background.jpg"  # file trong repo
+base64_bg = get_base64_of_bin_file(background_path)
+
 st.markdown(
-    """
+    f"""
     <style>
-    .stApp {
-        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    .stApp {{
+        background: url("data:image/jpg;base64,{base64_bg}");
+        background-size: cover;
+        background-attachment: fixed;
         color: white;
-    }
-    .stButton>button {
+    }}
+    .stButton>button {{
         background-color: #00c853;
         color: white;
         font-weight: bold;
         border-radius: 10px;
-    }
+    }}
+    .stFileUploader label {{
+        color: white !important;
+    }}
+    .stFileUploader div div {{
+        background-color: black !important;
+        color: white !important;
+        border-radius: 8px;
+        border: 1px solid #00c853;
+    }}
+    .stFileUploader div div::after {{
+        content: "Chọn tệp" !important;
+        color: white !important;
+    }}
     </style>
     """,
     unsafe_allow_html=True
