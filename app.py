@@ -1,3 +1,14 @@
+st.set_page_config(
+    page_title="EnviroVision",
+    page_icon="♻️",
+    layout="centered",
+    menu_items={
+        "Get Help": None,
+        "Report a Bug": None,
+        "About": None
+    }
+)
+
 import streamlit as st
 import cv2
 import torch
