@@ -163,10 +163,6 @@ st.markdown(
         border: none;
         box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
     }}
-    .stButton>button:hover {{
-        background-color: #00e676;
-        color: black;
-    }}
     </style>
     """,
     unsafe_allow_html=True
