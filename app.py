@@ -34,7 +34,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class_names = ['battery', 'biological', 'brown-glass', 'cardboard',
                'green-glass', 'metal', 'paper', 'plastic', 'trash', 'white-glass']
 
-# --- Preprocess function ---
+# --- Preprocess ---
 def preprocess_image(image):
     transform = transforms.Compose([
         transforms.ToPILImage(),
@@ -81,7 +81,7 @@ def detect_and_classify(image, conf_threshold):
 # --- Streamlit UI ---
 st.set_page_config(page_title="EnviroVision", page_icon="♻️", layout="centered")
 
-# --- Encode background.jpg thành base64 để dùng làm CSS ---
+# --- Custom background ---
 def get_base64_of_bin_file(bin_file):
     with open(bin_file, 'rb') as f:
         data = f.read()
@@ -93,7 +93,6 @@ base64_bg = get_base64_of_bin_file(background_path)
 st.markdown(
     f"""
     <style>
-    /* Background with dark overlay */
     .stApp {{
         background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
                     url("data:image/jpg;base64,{base64_bg}");
@@ -101,35 +100,26 @@ st.markdown(
         background-attachment: fixed;
         color: white;
     }}
-    
-    /* Title */
-    .stMarkdown h1 {{
+
+    h1 {{
         color: #00e676;
         text-align: center;
         font-weight: 900;
         text-shadow: 2px 2px 5px black;
     }}
-    
+
     /* File uploader */
-    .stFileUploader label {{
-        color: #ffffff !important;
-        font-weight: bold;
+    .stFileUploader div div span {{
+        display: none !important; /* Ẩn chữ tiếng Anh mặc định */
     }}
     .stFileUploader div div {{
         background-color: rgba(0,0,0,0.5) !important;
         border: 2px dashed #00e676 !important;
-        color: white !important;
         border-radius: 10px;
-    }}
-    
-    /* Slider */
-    .stSlider [role=radiogroup] {{
+        text-align: center;
         color: white !important;
     }}
-    .stSlider .css-1n76uvr, .stSlider .css-14xtw13 {{
-        color: #00e676 !important;
-    }}
-    
+
     /* Buttons */
     .stButton>button {{
         background-color: #00c853;
@@ -148,19 +138,17 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 st.title("♻️ EnviroVision - AI phân loại rác")
 
-uploaded_file = st.file_uploader("📸 Tải hình ảnh lên", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("📸 **Tải hình ảnh lên**", type=["jpg", "jpeg", "png"])
 
-# Confidence slider
-conf_threshold = st.slider("🔧 Confidence threshold", 0.1, 0.9, 0.3, 0.05)
+conf_threshold = st.slider("🔧 Ngưỡng độ tin cậy", 0.1, 0.9, 0.3, 0.05)
 
 if uploaded_file is not None:
     image = Image.open(uploaded_file).convert("RGB")
     st.image(image, caption="Ảnh gốc", use_column_width=True)
 
-    if st.button("🚀 Run Detection"):
+    if st.button("🚀 Chạy nhận diện"):
         with st.spinner("⚙️ Đang xử lý..."):
             result_img, results = detect_and_classify(image, conf_threshold)
 
@@ -168,4 +156,4 @@ if uploaded_file is not None:
 
         st.subheader("📊 Kết quả phân loại:")
         for label, conf, _ in results:
-            st.write(f"**{label}** - Confidence: {conf:.2f}")
+            st.write(f"**{label}** - Độ tin cậy: {conf:.2f}")
