@@ -1,14 +1,3 @@
-st.set_page_config(
-    page_title="EnviroVision",
-    page_icon="♻️",
-    layout="centered",
-    menu_items={
-        "Get Help": None,
-        "Report a Bug": None,
-        "About": None
-    }
-)
-
 import streamlit as st
 import cv2
 import torch
@@ -19,6 +8,17 @@ import numpy as np
 from PIL import Image
 from huggingface_hub import hf_hub_download
 import base64
+
+st.set_page_config(
+    page_title="EnviroVision",
+    page_icon="♻️",
+    layout="centered",
+    menu_items={
+        "Get Help": None,
+        "Report a Bug": None,
+        "About": None
+    }
+)
 
 # =====================
 # Load YOLO model
