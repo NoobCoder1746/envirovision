@@ -203,11 +203,11 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-if st.button("🚀 Chạy nhận diện"): 
+if st.button("Chạy nhận diện"): 
     with st.spinner("⚙️ Đang xử lý..."): 
         result_img, results = detect_and_classify(image, conf_threshold) 
         st.image(result_img, caption="Kết quả nhận diện", use_column_width=True) 
         
-        st.subheader("📊 Kết quả phân loại:") 
+        st.subheader("Kết quả phân loại:") 
         for label, conf, _ in results: 
             st.write(f"**{label}** - Độ tin cậy: {conf:.2f}")
