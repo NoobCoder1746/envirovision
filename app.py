@@ -102,7 +102,7 @@ def get_base64_of_bin_file(bin_file):
         data = f.read()
     return base64.b64encode(data).decode()
 
-background_path = "Screenshot 2025-09-29 at 16.18.53.png"  
+background_path = "trash-4897847_1280.jpg"  
 base64_bg = get_base64_of_bin_file(background_path)
 
 st.markdown(
