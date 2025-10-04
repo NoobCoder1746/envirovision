@@ -177,6 +177,11 @@ st.markdown(
     }}
 
     /* File uploader */
+    .stFileUploader label {{
+        color: white !important;
+        font-weight: bold;
+        text-align: center;
+    }}
     .stFileUploader div div {{
         background-color: rgba(0,0,0,0.6) !important;
         border: 2px solid #555555 !important;
