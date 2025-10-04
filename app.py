@@ -17,7 +17,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # ===============================
 # Hàm load mô hình EfficientNet-V2-S Phase3b
 # ===============================
-def load_efficientnet_phase3b(checkpoint_path, num_classes=8, device="cpu"):
+def load_efficientnet(checkpoint_path, num_classes=8, device="cpu"):
     model = models.efficientnet_v2_s(weights=models.EfficientNet_V2_S_Weights.IMAGENET1K_V1)
     in_features = model.classifier[-1].in_features
     model.classifier[-1] = nn.Linear(in_features, num_classes)
@@ -27,7 +27,7 @@ def load_efficientnet_phase3b(checkpoint_path, num_classes=8, device="cpu"):
     model.to(device)
     model.eval()
 
-    print(f"✅ Loaded EfficientNet-V2-S Phase3b model from {checkpoint_path}")
+    print(f"✅ Loaded EfficientNet-V2-S model from {checkpoint_path}")
     return model
 
 # ===============================
@@ -44,9 +44,9 @@ yolo_model = YOLO(yolo_model_path)
 # ===============================
 efficientnetv2s_model_path = hf_hub_download(
     repo_id="Noob1746/EnviroVision",
-    filename="phase3b_best.pth"  # Đảm bảo tên file trùng với file bạn upload
+    filename="class.pth"  # Đảm bảo tên file trùng với file bạn upload
 )
-classification_model = load_efficientnet_phase3b(
+classification_model = load_efficientnet(
     efficientnetv2s_model_path, num_classes=8, device=device
 )
 
