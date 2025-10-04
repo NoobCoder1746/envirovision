@@ -68,6 +68,17 @@ def detect_and_classify(image, conf_threshold):
     results = yolo_model(img, conf=conf_threshold)
     final_results = []
 
+    color_map = {
+        "biodegradable": (0, 200, 0),      # Xanh lá
+        "cardboard": (42, 157, 244),       # Xanh dương nhạt
+        "clothes": (255, 105, 180),        # Hồng
+        "glass": (0, 255, 255),            # Vàng chanh
+        "metal": (192, 192, 192),          # Xám bạc
+        "paper": (0, 128, 255),            # Xanh biển
+        "plastic": (255, 165, 0),          # Cam
+        "shoes": (147, 112, 219),          # Tím nhạt
+    }
+
     for result in results:
         for box in result.boxes:
             x1, y1, x2, y2 = box.xyxy[0].int().tolist()
@@ -86,9 +97,11 @@ def detect_and_classify(image, conf_threshold):
 
             final_results.append((label, conf_score, (x1, y1, x2, y2)))
 
-            cv2.rectangle(img_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            color = color_map.get(label, (0, 255, 0))  
+
+            cv2.rectangle(img_bgr, (x1, y1), (x2, y2), color, 2)
             cv2.putText(img_bgr, f"{label} {conf_score:.2f}",
-                        (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                        (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
 
     img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
     return img_rgb, final_results
