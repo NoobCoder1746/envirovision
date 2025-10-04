@@ -241,5 +241,22 @@ if st.button("Chạy nhận diện"):
         st.image(result_img, caption="Kết quả nhận diện", use_container_width=True)
 
         st.subheader("Kết quả phân loại:")
+
+        color_map_html = {
+            "biodegradable": "#00C800",   # Xanh lá
+            "cardboard": "#2A9DF4",       # Xanh dương nhạt
+            "clothes": "#FF69B4",         # Hồng
+            "glass": "#00FFFF",           # Vàng chanh
+            "metal": "#C0C0C0",           # Xám bạc
+            "paper": "#0080FF",           # Xanh biển
+            "plastic": "#FFA500",         # Cam
+            "shoes": "#9370DB",           # Tím nhạt
+        }
+
         for label, conf, _ in results:
-            st.write(f"**{label}** - Độ tin cậy: {conf:.2f}")
+            color = color_map_html.get(label, "#00FF00")
+            st.markdown(
+                f"<span style='color:{color}; font-weight:bold;'>● {label}</span> — Độ tin cậy: **{conf:.2f}**",
+                unsafe_allow_html=True
+            )
+
