@@ -242,16 +242,17 @@ if st.button("Chạy nhận diện"):
 
         st.subheader("Kết quả phân loại:")
 
+        # Màu chữ khớp với màu khung trên ảnh
         color_map = {
-        "biodegradable": "rgb(0, 200, 0)",      
-        "cardboard": "rgb(42, 157, 244)",       
-        "clothes": "rgb(255, 105, 180)",        
-        "glass": "rgb(255, 255, 0)",           
-        "metal": "rgb(192, 192, 192)",          
-        "paper": "rgb(255, 128, 0)",            
-        "plastic": "rgb(0, 165, 255)",          
-        "shoes": "rgb(219, 112, 147)",          
-    }
+            "biodegradable": "rgb(0, 200, 0)",      # Xanh lá
+            "cardboard": "rgb(42, 157, 244)",       # Xanh dương nhạt
+            "clothes": "rgb(255, 105, 180)",        # Hồng
+            "glass": "rgb(255, 255, 0)",            # Vàng
+            "metal": "rgb(192, 192, 192)",          # Xám bạc
+            "paper": "rgb(255, 128, 0)",            # Cam đậm
+            "plastic": "rgb(0, 165, 255)",          # Xanh biển
+            "shoes": "rgb(219, 112, 147)",          # Tím hồng
+        }
 
         vietnamese_labels = {
             "biodegradable": "Rác hữu cơ",
@@ -265,25 +266,18 @@ if st.button("Chạy nhận diện"):
         }
 
         for label, conf, _ in results:
-            color = color_map.get(label, "#00FF00")
+            color = color_map.get(label, "rgb(0, 255, 0)")
             vietnamese_name = vietnamese_labels.get(label, label)
             st.markdown(
                 f"""
-                <div style="
-                    display:inline-block;
-                    background-color:{color};
-                    color:white;
-                    padding:6px 12px;
-                    border-radius:8px;
+                <span style="
+                    color:{color};
                     font-weight:bold;
-                    margin-bottom:8px;
-                    box-shadow:0 2px 6px rgba(0,0,0,0.3);
+                    font-size:16px;
                 ">
                     {vietnamese_name}
-                </div>
+                </span>
                 <span style="color:white;"> — Độ tin cậy: {conf:.2f}</span>
                 """,
                 unsafe_allow_html=True
             )
-
-
