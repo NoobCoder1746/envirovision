@@ -243,14 +243,14 @@ if st.button("Chạy nhận diện"):
         st.subheader("Kết quả phân loại:")
 
         color_map = {
-            "biodegradable": "#00C853",  # xanh lá tươi
-            "cardboard": "#2A9DF4",      # xanh dương nhạt
-            "clothes": "#FF69B4",        # hồng
-            "glass": "#00FFFF",          # xanh ngọc
-            "metal": "#C0C0C0",          # xám bạc
-            "paper": "#0080FF",          # xanh biển
-            "plastic": "#FFA500",        # cam
-            "shoes": "#9370DB",          # tím nhạt
+        "biodegradable": (0, 200, 0),      # Xanh lá
+        "cardboard": (42, 157, 244),       # Xanh dương nhạt
+        "clothes": (255, 105, 180),        # Hồng
+        "glass": (0, 255, 255),            # Vàng chanh
+        "metal": (192, 192, 192),          # Xám bạc
+        "paper": (0, 128, 255),            # Xanh biển
+        "plastic": (255, 165, 0),          # Cam
+        "shoes": (147, 112, 219),          # Tím nhạt
         }
 
         vietnamese_labels = {
