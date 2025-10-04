@@ -242,21 +242,48 @@ if st.button("Chạy nhận diện"):
 
         st.subheader("Kết quả phân loại:")
 
-        color_map_html = {
-            "biodegradable": "#00C800",   # Xanh lá
-            "cardboard": "#2A9DF4",       # Xanh dương nhạt
-            "clothes": "#FF69B4",         # Hồng
-            "glass": "#00FFFF",           # Vàng chanh
-            "metal": "#C0C0C0",           # Xám bạc
-            "paper": "#0080FF",           # Xanh biển
-            "plastic": "#FFA500",         # Cam
-            "shoes": "#9370DB",           # Tím nhạt
+        color_map = {
+            "biodegradable": "#00C853",  # xanh lá tươi
+            "cardboard": "#2A9DF4",      # xanh dương nhạt
+            "clothes": "#FF69B4",        # hồng
+            "glass": "#00FFFF",          # xanh ngọc
+            "metal": "#C0C0C0",          # xám bạc
+            "paper": "#0080FF",          # xanh biển
+            "plastic": "#FFA500",        # cam
+            "shoes": "#9370DB",          # tím nhạt
+        }
+
+        vietnamese_labels = {
+            "biodegradable": "Rác hữu cơ",
+            "cardboard": "Bìa cứng",
+            "clothes": "Quần áo",
+            "glass": "Thủy tinh",
+            "metal": "Kim loại",
+            "paper": "Giấy",
+            "plastic": "Nhựa",
+            "shoes": "Giày dép",
         }
 
         for label, conf, _ in results:
-            color = color_map_html.get(label, "#00FF00")
+            color = color_map.get(label, "#00FF00")
+            vietnamese_name = vietnamese_labels.get(label, label)
             st.markdown(
-                f"<span style='color:{color}; font-weight:bold;'>● {label}</span> — Độ tin cậy: **{conf:.2f}**",
+                f"""
+                <div style="
+                    display:inline-block;
+                    background-color:{color};
+                    color:white;
+                    padding:6px 12px;
+                    border-radius:8px;
+                    font-weight:bold;
+                    margin-bottom:8px;
+                    box-shadow:0 2px 6px rgba(0,0,0,0.3);
+                ">
+                    {vietnamese_name}
+                </div>
+                <span style="color:white;"> — Độ tin cậy: {conf:.2f}</span>
+                """,
                 unsafe_allow_html=True
             )
+
 
