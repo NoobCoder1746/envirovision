@@ -182,20 +182,20 @@ st.markdown(
         font-weight: bold;
         text-align: center;
     }}
-    .stFileUploader div div {
-    background-color: rgba(0,0,0,0.6) !important;
-    border: 2px solid #555555 !important;
-    border-radius: 3px;
-    text-align: center;
-    color: white !important;
-    transition: all 0.3s ease-in-out;
-    }
+    .stFileUploader div div {{
+        background-color: rgba(0,0,0,0.6) !important;
+        border: 2px solid #555555 !important;
+        border-radius: 3px;
+        text-align: center;
+        color: white !important;
+        transition: all 0.3s ease-in-out;
+    }}
 
-    .stFileUploader div div:hover {
-    background-color: rgba(255,255,255,0.1) !important;
-    border-color: #cccccc !important;
-    box-shadow: 0 0 10px rgba(255,255,255,0.2);
-    }
+    .stFileUploader div div:hover {{
+        background-color: rgba(255,255,255,0.1) !important;
+        border-color: #cccccc !important;
+        box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }}
 
     /* Slider */
     .stSlider label, .stSlider span {{
