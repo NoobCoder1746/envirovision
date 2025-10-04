@@ -184,8 +184,8 @@ st.markdown(
     }}
     .stFileUploader div div {{
         background-color: rgba(0,0,0,0.6) !important;
-        border: 2px solid #cccccc !important;
-        border-radius: 12px;
+        border: 2px solid #aaaaaa !important;
+        border-radius: 6px;
         text-align: center;
         color: white !important;
     }}
