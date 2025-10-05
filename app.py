@@ -63,37 +63,50 @@ def preprocess_image(image):
     return transform(image).unsqueeze(0)
 
 
-def detect_and_classify(image, conf_threshold): 
-    img = np.array(image) 
-    img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR) 
-    results = yolo_model(img, conf=conf_threshold) 
-    final_results = [] 
-    color_map = { "biodegradable": (0, 200, 0), # Xanh lá 
-                 "cardboard": (42, 157, 244), # Xanh dương nhạt 
-                 "clothes": (255, 105, 180), # Hồng 
-                 "glass": (0, 255, 255), # Vàng chanh 
-                 "metal": (192, 192, 192), # Xám bạc 
-                 "paper": (0, 128, 255), # Xanh biển 
-                 "plastic": (255, 165, 0), # Cam 
-                 "shoes": (147, 112, 219), # Tím nhạt 
-                } 
-    for result in results: 
-        for box in result.boxes: 
-            x1, y1, x2, y2 = box.xyxy[0].int().tolist() 
-            cropped_obj = img[y1:y2, x1:x2] 
-            if cropped_obj.size == 0: 
-                continue 
-            pre_img = preprocess_image(cropped_obj).to(device) 
-            with torch.no_grad(): 
-                outputs = classification_model(pre_img) 
-                _, predicted = torch.max(outputs, 1) 
-                conf_score = torch.nn.functional.softmax(outputs, dim=1)[0][predicted].item() 
-                label = class_names[predicted.item()] 
-            final_results.append((label, conf_score, (x1, y1, x2, y2))) 
-            color = color_map.get(label, (0, 255, 0)) 
-            cv2.rectangle(img_bgr, (x1, y1), (x2, y2), color, 2) 
-            cv2.putText(img_bgr, f"{label} {conf_score:.2f}", (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2) 
-            img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB) 
+def detect_and_classify(image, conf_threshold):
+    img = np.array(image)
+    img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    
+    results = yolo_model(img_bgr, conf=conf_threshold)
+    result = results[0]  # single image
+    
+    final_results = []
+    color_map = {
+        "biodegradable": (0, 200, 0),
+        "cardboard": (42, 157, 244),
+        "clothes": (255, 105, 180),
+        "glass": (0, 255, 255),
+        "metal": (192, 192, 192),
+        "paper": (0, 128, 255),
+        "plastic": (255, 165, 0),
+        "shoes": (147, 112, 219),
+    }
+
+    for box in result.boxes:
+        x1, y1, x2, y2 = box.xyxy[0].int().tolist()
+        cropped_obj = img[y1:y2, x1:x2]
+        if cropped_obj.size == 0:
+            continue
+
+        pre_img = preprocess_image(cropped_obj)
+        if pre_img.ndim == 3:
+            pre_img = pre_img.unsqueeze(0)
+        pre_img = pre_img.to(device)
+
+        with torch.no_grad():
+            outputs = classification_model(pre_img)
+            probs = torch.nn.functional.softmax(outputs, dim=1)
+            conf_score, predicted = torch.max(probs, 1)
+            conf_score = conf_score.item()
+            label = class_names[predicted.item()]
+
+        final_results.append((label, conf_score, (x1, y1, x2, y2)))
+        color = color_map.get(label, (0, 255, 0))
+        cv2.rectangle(img_bgr, (x1, y1), (x2, y2), color, 2)
+        cv2.putText(img_bgr, f"{label} {conf_score:.2f}", (x1, y1 - 5),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+
+    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
     return img_rgb, final_results
 
 st.set_page_config(page_title="EnviroVision", page_icon="♻️", layout="centered")
