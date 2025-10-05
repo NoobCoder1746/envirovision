@@ -243,8 +243,6 @@ if st.button("Chạy nhận diện"):
         result_img, results = detect_and_classify(image, conf_threshold)
         st.image(result_img, caption="Kết quả nhận diện", use_container_width=True)
 
-        st.subheader("Kết quả phân loại:")
-
         # Màu chữ khớp với màu khung trên ảnh
         color_map = {
             "biodegradable": "rgb(0, 200, 0)",      # Xanh lá
@@ -284,6 +282,3 @@ if st.button("Chạy nhận diện"):
                 """,
                 unsafe_allow_html=True
             )
-        st.subheader("Kết quả phân loại:")
-        for label, conf, _ in results:
-            st.write(f"**{label}** - Độ tin cậy: {conf:.2f}")
