@@ -147,8 +147,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("Dự án Ý tưởng Khởi nghiệp:        
-♻️ EnviroVision - AI phân loại rác")
+st.title("Dự án Ý tưởng Khởi nghiệp:         ♻️ EnviroVision - AI phân loại rác")
 uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
 conf_threshold = st.slider(
     "🔧 Ngưỡng độ tin cậy (Càng thấp thì mô hình sẽ nhận diện được nhiều hơn nhưng độ chính xác giảm dần)", 0.1, 0.9,
