@@ -92,7 +92,8 @@ def detect_and_classify(image, conf_threshold):
             final_results.append((label, conf_score, (x1, y1, x2, y2))) 
             color = color_map.get(label, (0, 255, 0)) 
             cv2.rectangle(img_bgr, (x1, y1), (x2, y2), color, 2) 
-            cv2.putText(img_bgr, f"{label} {conf_score:.2f}", (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2) img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB) 
+            cv2.putText(img_bgr, f"{label} {conf_score:.2f}", (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2) 
+            img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB) 
     return img_rgb, final_results
 
 st.set_page_config(page_title="EnviroVision", page_icon="♻️", layout="centered")
