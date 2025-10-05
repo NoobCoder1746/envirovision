@@ -63,36 +63,36 @@ def preprocess_image(image):
     return transform(image).unsqueeze(0)
 
 
-def detect_and_classify(image, conf_threshold):
-    img = np.array(image)
-    img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-
-    results = yolo_model(img, conf=conf_threshold)
-    final_results = []
-
-    for result in results:
-        for box in result.boxes:
-            x1, y1, x2, y2 = box.xyxy[0].int().tolist()
-            cropped_obj = img[y1:y2, x1:x2]
-
-            if cropped_obj.size == 0:
-                continue
-
-            pre_img = preprocess_image(cropped_obj).to(device)
-
-            with torch.no_grad():
-                outputs = classification_model(pre_img)
-                _, predicted = torch.max(outputs, 1)
-                conf_score = torch.nn.functional.softmax(outputs, dim=1)[0][predicted].item()
-                label = class_names[predicted.item()]
-
-            final_results.append((label, conf_score, (x1, y1, x2, y2)))
-
-            cv2.rectangle(img_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.putText(img_bgr, f"{label} {conf_score:.2f}",
-                        (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-
-    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+def detect_and_classify(image, conf_threshold): 
+    img = np.array(image) 
+    img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR) 
+    results = yolo_model(img, conf=conf_threshold) 
+    final_results = [] 
+    color_map = { "biodegradable": (0, 200, 0), # Xanh lá 
+                 "cardboard": (42, 157, 244), # Xanh dương nhạt 
+                 "clothes": (255, 105, 180), # Hồng 
+                 "glass": (0, 255, 255), # Vàng chanh 
+                 "metal": (192, 192, 192), # Xám bạc 
+                 "paper": (0, 128, 255), # Xanh biển 
+                 "plastic": (255, 165, 0), # Cam 
+                 "shoes": (147, 112, 219), # Tím nhạt 
+                } 
+    for result in results: 
+        for box in result.boxes: 
+            x1, y1, x2, y2 = box.xyxy[0].int().tolist() 
+            cropped_obj = img[y1:y2, x1:x2] 
+            if cropped_obj.size == 0: 
+                continue 
+            pre_img = preprocess_image(cropped_obj).to(device) 
+            with torch.no_grad(): 
+                outputs = classification_model(pre_img) 
+                _, predicted = torch.max(outputs, 1) 
+                conf_score = torch.nn.functional.softmax(outputs, dim=1)[0][predicted].item() 
+                label = class_names[predicted.item()] 
+            final_results.append((label, conf_score, (x1, y1, x2, y2))) 
+            color = color_map.get(label, (0, 255, 0)) 
+            cv2.rectangle(img_bgr, (x1, y1), (x2, y2), color, 2) 
+            cv2.putText(img_bgr, f"{label} {conf_score:.2f}", (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2) img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB) 
     return img_rgb, final_results
 
 st.set_page_config(page_title="EnviroVision", page_icon="♻️", layout="centered")
@@ -229,6 +229,47 @@ if st.button("Chạy nhận diện"):
         result_img, results = detect_and_classify(image, conf_threshold)
         st.image(result_img, caption="Kết quả nhận diện", use_container_width=True)
 
+        st.subheader("Kết quả phân loại:")
+
+        # Màu chữ khớp với màu khung trên ảnh
+        color_map = {
+            "biodegradable": "rgb(0, 200, 0)",      # Xanh lá
+            "cardboard": "rgb(42, 157, 244)",       # Xanh dương nhạt
+            "clothes": "rgb(255, 105, 180)",        # Hồng
+            "glass": "rgb(255, 255, 0)",            # Vàng
+            "metal": "rgb(192, 192, 192)",          # Xám bạc
+            "paper": "rgb(255, 128, 0)",            # Cam đậm
+            "plastic": "rgb(0, 165, 255)",          # Xanh biển
+            "shoes": "rgb(219, 112, 147)",          # Tím hồng
+        }
+
+        vietnamese_labels = {
+            "biodegradable": "Rác hữu cơ",
+            "cardboard": "Bìa cứng",
+            "clothes": "Quần áo",
+            "glass": "Thủy tinh",
+            "metal": "Kim loại",
+            "paper": "Giấy",
+            "plastic": "Nhựa",
+            "shoes": "Giày dép",
+        }
+
+        for label, conf, _ in results:
+            color = color_map.get(label, "rgb(0, 255, 0)")
+            vietnamese_name = vietnamese_labels.get(label, label)
+            st.markdown(
+                f"""
+                <span style="
+                    color:{color};
+                    font-weight:bold;
+                    font-size:16px;
+                ">
+                    {vietnamese_name}
+                </span>
+                <span style="color:white;"> — Độ tin cậy: {conf:.2f}</span>
+                """,
+                unsafe_allow_html=True
+            )
         st.subheader("Kết quả phân loại:")
         for label, conf, _ in results:
             st.write(f"**{label}** - Độ tin cậy: {conf:.2f}")
