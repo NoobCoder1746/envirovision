@@ -32,7 +32,7 @@ yolo_model = YOLO(yolo_model_path)
 
 efficientnetv2s_model_path = hf_hub_download(
     repo_id="Noob1746/EnviroVision",
-    filename="class.pth"  # Đảm bảo tên file trùng với file bạn upload
+    filename="class.pth"  
 )
 classification_model = load_efficientnet(
     efficientnetv2s_model_path, num_classes=8, device=device
