@@ -11,6 +11,7 @@ import base64
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
 def load_efficientnet(checkpoint_path, num_classes=8, device="cpu"):
     model = models.efficientnet_v2_s(weights=models.EfficientNet_V2_S_Weights.IMAGENET1K_V1)
     in_features = model.classifier[-1].in_features
@@ -23,6 +24,7 @@ def load_efficientnet(checkpoint_path, num_classes=8, device="cpu"):
 
     print(f"✅ Loaded EfficientNet-V2-S model from {checkpoint_path}")
     return model
+
 
 yolo_model_path = hf_hub_download(
     repo_id="Noob1746/EnviroVision",
@@ -68,17 +70,6 @@ def detect_and_classify(image, conf_threshold):
     results = yolo_model(img, conf=conf_threshold)
     final_results = []
 
-    color_map = {
-        "biodegradable": (0, 200, 0),      # Xanh lá
-        "cardboard": (42, 157, 244),       # Xanh dương nhạt
-        "clothes": (255, 105, 180),        # Hồng
-        "glass": (0, 255, 255),            # Vàng chanh
-        "metal": (192, 192, 192),          # Xám bạc
-        "paper": (0, 128, 255),            # Xanh biển
-        "plastic": (255, 165, 0),          # Cam
-        "shoes": (147, 112, 219),          # Tím nhạt
-    }
-
     for result in results:
         for box in result.boxes:
             x1, y1, x2, y2 = box.xyxy[0].int().tolist()
@@ -97,11 +88,9 @@ def detect_and_classify(image, conf_threshold):
 
             final_results.append((label, conf_score, (x1, y1, x2, y2)))
 
-            color = color_map.get(label, (0, 255, 0))  
-
-            cv2.rectangle(img_bgr, (x1, y1), (x2, y2), color, 2)
+            cv2.rectangle(img_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
             cv2.putText(img_bgr, f"{label} {conf_score:.2f}",
-                        (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
+                        (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
     img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
     return img_rgb, final_results
@@ -147,7 +136,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("Dự án Ý tưởng Khởi nghiệp:         ♻️ EnviroVision - AI phân loại rác")
+st.title("♻️ EnviroVision - AI phân loại rác")
 uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
 conf_threshold = st.slider(
     "🔧 Ngưỡng độ tin cậy (Càng thấp thì mô hình sẽ nhận diện được nhiều hơn nhưng độ chính xác giảm dần)", 0.1, 0.9,
@@ -241,43 +230,5 @@ if st.button("Chạy nhận diện"):
         st.image(result_img, caption="Kết quả nhận diện", use_container_width=True)
 
         st.subheader("Kết quả phân loại:")
-
-        # Màu chữ khớp với màu khung trên ảnh
-        color_map = {
-            "biodegradable": "rgb(0, 200, 0)",      # Xanh lá
-            "cardboard": "rgb(42, 157, 244)",       # Xanh dương nhạt
-            "clothes": "rgb(255, 105, 180)",        # Hồng
-            "glass": "rgb(255, 255, 0)",            # Vàng
-            "metal": "rgb(192, 192, 192)",          # Xám bạc
-            "paper": "rgb(255, 128, 0)",            # Cam đậm
-            "plastic": "rgb(0, 165, 255)",          # Xanh biển
-            "shoes": "rgb(219, 112, 147)",          # Tím hồng
-        }
-
-        vietnamese_labels = {
-            "biodegradable": "Rác hữu cơ",
-            "cardboard": "Bìa cứng",
-            "clothes": "Quần áo",
-            "glass": "Thủy tinh",
-            "metal": "Kim loại",
-            "paper": "Giấy",
-            "plastic": "Nhựa",
-            "shoes": "Giày dép",
-        }
-
         for label, conf, _ in results:
-            color = color_map.get(label, "rgb(0, 255, 0)")
-            vietnamese_name = vietnamese_labels.get(label, label)
-            st.markdown(
-                f"""
-                <span style="
-                    color:{color};
-                    font-weight:bold;
-                    font-size:16px;
-                ">
-                    {vietnamese_name}
-                </span>
-                <span style="color:white;"> — Độ tin cậy: {conf:.2f}</span>
-                """,
-                unsafe_allow_html=True
-            )
+            st.write(f"**{label}** - Độ tin cậy: {conf:.2f}")
