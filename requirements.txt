@@ -1,4 +1,5 @@
 ﻿streamlit
+ultralytics
 torch
 torchvision
 pillow
