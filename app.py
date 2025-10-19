@@ -222,7 +222,7 @@ if st.button("Chạy nhận diện") and uploaded_file is not None:
             VIETNAMESE_LABELS = {
                 "HDPE": "Nhựa HDPE", "LDPE": "Nhựa LDPE", "Other plastic": "Nhựa khác", "PET": "Nhựa PET",
                 "PP": "Nhựa PP", "PS": "Nhựa PS", "PVC": "Nhựa PVC", "aerosol": "Bình xịt",
-                "battery": "Pin/ắc quy", "cardboard": "Bìa cứng", "charger": "Sạc điện thoại",
+                "battery": "Pin/ắc quy", "cardboard": "Bìa cứng", "charger": "Sạc",
                 "clothes": "Quần áo", "computer": "Thiết bị điện tử", "glass": "Thủy tinh",
                 "keyboard": "Bàn phím", "mouse": "Chuột máy tính", "organic": "Rác hữu cơ",
                 "paper": "Giấy", "phone": "Điện thoại", "recyclable metal": "Kim loại tái chế",
