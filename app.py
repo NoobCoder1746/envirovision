@@ -9,50 +9,78 @@ from PIL import Image
 from huggingface_hub import hf_hub_download
 import base64
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+import torch
+import torch.nn as nn
+from torchvision import transforms
+import timm
+import numpy as np
+from PIL import Image
+import os
+import cv2 # For reading/writing/displaying images
+from huggingface_hub import hf_hub_download
 
+# --- Configuration ---
+NUM_CLASSES = 22 # The number of classes from your previous evaluation
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-def load_efficientnet(checkpoint_path, num_classes=8, device="cpu"):
-    model = models.efficientnet_v2_s(weights=models.EfficientNet_V2_S_Weights.IMAGENET1K_V1)
-    in_features = model.classifier[-1].in_features
-    model.classifier[-1] = nn.Linear(in_features, num_classes)
+# --- Hugging Face Configuration ---
+HF_REPO_ID = "Noob1746/EnviroVision"
+HF_MODEL_FILENAME = "efficientnetv2-b0 .pth" # Note the space in the filename
+
+# Class names must match the order used during training for the 22-class model
+CLASS_NAMES_22 = [
+    'HDPE', 'LDPE', 'Other plastic', 'PET', 'PP', 'PS', 'PVC', 
+    'aerosol', 'battery', 'cardboard', 'charger', 'clothes', 
+    'computer', 'glass', 'keyboard', 'mouse', 'organic', 
+    'paper', 'phone', 'recyclable metal', 'remote control', 'shoes'
+]
+
+# --- Model Loading Function ---
+
+def load_efficientnet_b0(repo_id, filename, num_classes, device):
+    try:
+        checkpoint_path = hf_hub_download(repo_id=repo_id, filename=filename)
+        print(f"✅ Download complete. Checkpoint saved locally at: {checkpoint_path}")
+    except Exception as e:
+        print(f"❌ Error downloading model from Hugging Face: {e}")
+        raise
+    
+    # Use timm to create the model structure, matching your training script
+    model = timm.create_model(
+        'tf_efficientnetv2_b0',
+        pretrained=False, # We load our custom checkpoint
+        num_classes=num_classes
+    )
 
     checkpoint = torch.load(checkpoint_path, map_location=device)
-    model.load_state_dict(checkpoint["model_state_dict"])
+    
+    # Load the state dictionary. Prioritize EMA state which typically performed better.
+    if "ema_state_dict" in checkpoint:
+        model.load_state_dict(checkpoint["ema_state_dict"]) 
+        print(f"Loaded EMA state. Val Acc: {checkpoint.get('val_acc', 'N/A'):.4f}")
+    elif "model_state_dict" in checkpoint:
+        model.load_state_dict(checkpoint["model_state_dict"])
+        print(f"Loaded Raw state. Val Acc: {checkpoint.get('val_acc', 'N/A'):.4f}")
+    else:
+        # Fallback for old/simple checkpoints that only save the model state
+        try:
+            model.load_state_dict(checkpoint)
+            print("Loaded model state directly (assuming simple state dict structure).")
+        except:
+             raise ValueError("Checkpoint file does not contain a recognizable model state ('ema_state_dict', 'model_state_dict', or simple state dict).")
+
     model.to(device)
     model.eval()
 
-    print(f"✅ Loaded EfficientNet-V2-S model from {checkpoint_path}")
+    print(f"✅ Model loaded and set to evaluation mode on {device}.")
     return model
 
+# --- Preprocessing Function ---
 
-yolo_model_path = hf_hub_download(
-    repo_id="Noob1746/EnviroVision",
-    filename="best.pt"
-)
-yolo_model = YOLO(yolo_model_path)
-
-efficientnetv2s_model_path = hf_hub_download(
-    repo_id="Noob1746/EnviroVision",
-    filename="class.pth"  
-)
-classification_model = load_efficientnet(
-    efficientnetv2s_model_path, num_classes=8, device=device
-)
-
-class_names = [
-    "biodegradable",
-    "cardboard",
-    "clothes",
-    "glass",
-    "metal",
-    "paper",
-    "plastic",
-    "shoes"
-]
-
-
-def preprocess_image(image):
+def preprocess_image(image: np.ndarray):
+    """
+    Transforms the input NumPy image (H, W, C) into the required PyTorch tensor (1, 3, 224, 224).
+    """
     transform = transforms.Compose([
         transforms.ToPILImage(),
         transforms.Resize((224, 224)),
@@ -60,54 +88,41 @@ def preprocess_image(image):
         transforms.Normalize([0.485, 0.456, 0.406],
                              [0.229, 0.224, 0.225])
     ])
+    # The output shape is (1, 3, 224, 224)
     return transform(image).unsqueeze(0)
 
+def classify_single_image(image_input, classification_model, class_names, device):
+    """
+    Takes an image (NumPy array or PIL Image), preprocesses it, 
+    and classifies it using the EfficientNet model.
+    """
+    # Convert input to NumPy array
+    if isinstance(image_input, Image.Image):
+        img_np = np.array(image_input.convert("RGB"))
+    elif isinstance(image_input, np.ndarray):
+        img_np = image_input
+    else:
+        raise TypeError("Input must be a PIL Image or NumPy array.")
 
-def detect_and_classify(image, conf_threshold):
-    img = np.array(image)
-    img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    
-    results = yolo_model(img_bgr, conf=conf_threshold)
-    result = results[0]  # single image
-    
-    final_results = []
-    color_map = {
-        "biodegradable": (0, 200, 0),
-        "cardboard": (42, 157, 244),
-        "clothes": (255, 105, 180),
-        "glass": (0, 255, 255),
-        "metal": (192, 192, 192),
-        "paper": (0, 128, 255),
-        "plastic": (255, 165, 0),
-        "shoes": (147, 112, 219),
-    }
+    # 1. Preprocess
+    pre_img_tensor = preprocess_image(img_np)
+    pre_img_tensor = pre_img_tensor.to(device)
 
-    for box in result.boxes:
-        x1, y1, x2, y2 = box.xyxy[0].int().tolist()
-        cropped_obj = img[y1:y2, x1:x2]
-        if cropped_obj.size == 0:
-            continue
+    # 2. Classify
+    with torch.no_grad():
+        outputs = classification_model(pre_img_tensor)
+        # Apply softmax to get probabilities
+        probs = torch.nn.functional.softmax(outputs, dim=1)
+        
+        # Get the class with the highest probability
+        conf_score, predicted = torch.max(probs, 1)
+        
+        conf_score = conf_score.item()
+        label = class_names[predicted.item()]
 
-        pre_img = preprocess_image(cropped_obj)
-        if pre_img.ndim == 3:
-            pre_img = pre_img.unsqueeze(0)
-        pre_img = pre_img.to(device)
+    # 3. Return result and the original image (for display)
+    return label, conf_score, img_np
 
-        with torch.no_grad():
-            outputs = classification_model(pre_img)
-            probs = torch.nn.functional.softmax(outputs, dim=1)
-            conf_score, predicted = torch.max(probs, 1)
-            conf_score = conf_score.item()
-            label = class_names[predicted.item()]
-
-        final_results.append((label, conf_score, (x1, y1, x2, y2)))
-        color = color_map.get(label, (0, 255, 0))
-        cv2.rectangle(img_bgr, (x1, y1), (x2, y2), color, 2)
-        cv2.putText(img_bgr, f"{label} {conf_score:.2f}", (x1, y1 - 5),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
-
-    img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-    return img_rgb, final_results
 
 st.set_page_config(page_title="EnviroVision", page_icon="♻️", layout="centered")
 
