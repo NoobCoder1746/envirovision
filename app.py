@@ -23,6 +23,33 @@ CLASS_NAMES_22 = [
     'paper', 'phone', 'recyclable metal', 'remote control', 'shoes'
 ]
 
+
+TRASH_BIN_MAP = {
+    'HDPE': {"bin": "Tái chế (Nhựa) nên bỏ vào thùng rác tái chế", "emoji": "♻️", "color": "#0099cc"}, 
+    'LDPE': {"bin": "Tái chế (Nhựa) nên bỏ vào thùng rác tái chế", "emoji": "♻️", "color": "#0099cc"},
+    'PET': {"bin": "Tái chế (Nhựa) nên bỏ vào thùng rác tái chế", "emoji": "♻️", "color": "#0099cc"},
+    'PP': {"bin": "Tái chế (Nhựa) nên bỏ vào thùng rác tái chế)", "emoji": "♻️", "color": "#0099cc"},
+    'PS': {"bin": "Tái chế (Nhựa) nên bỏ vào thùng rác tái chế", "emoji": "♻️", "color": "#0099cc"},
+    'PVC': {"bin": "Tái chế (Nhựa) nên bỏ vào thùng rác tái chế", "emoji": "♻️", "color": "#0099cc"},
+    'Other plastic': {"bin": "Rác thải khác nên bỏ vào thùng rác vô cơ", "emoji": "🗑️", "color": "#999999"}, 
+    'battery': {"bin": "Rác nguy hại (Pin/Ắc quy) nên bỏ vào thùng rác nguy hại (nếu có) nếu không có thì tuyệt đối không bỏ vào những thùng kia", "emoji": "🔋⚠️", "color": "#ff3333"},
+    'charger': {"bin": "Rác điện tử/Điện thoại nên bỏ vào thùng rác nguy hại (nếu có) nếu không có thì tuyệt đối không bỏ vào những thùng kia", "emoji": "💻🔌", "color": "#cc66ff"},
+    'computer': {"bin": "Rác điện tử (Máy tính) nên bỏ vào thùng rác nguy hại (nếu có) nếu không có thì tuyệt đối không bỏ vào những thùng kia", "emoji": "💻", "color": "#cc66ff"},
+    'keyboard': {"bin": "Rác điện tử (Bàn phím) nên bỏ vào thùng rác nguy hại (nếu có) nếu không có thì tuyệt đối không bỏ vào những thùng kia", "emoji": "⌨️", "color": "#cc66ff"},
+    'mouse': {"bin": "Rác điện tử (Chuột) nên bỏ vào thùng rác nguy hại (nếu có) nếu không có thì tuyệt đối không bỏ vào những thùng kia", "emoji": "🖱️", "color": "#cc66ff"},
+    'phone': {"bin": "Rác điện tử (Điện thoại) nên bỏ vào thùng rác nguy hại (nếu có) nếu không có thì tuyệt đối không bỏ vào những thùng kia", "emoji": "📱", "color": "#cc66ff"},
+    'remote control': {"bin": "Rác điện tử (Điều khiển) nên bỏ vào thùng rác nguy hại (nếu có) nếu không có thì tuyệt đối không bỏ vào những thùng kia", "emoji": "📺", "color": "#cc66ff"},
+    'aerosol': {"bin": "Rác nguy hại (Bình xịt) nên bỏ vào thùng rác nguy hại (nếu có) nếu không có thì tuyệt đối không bỏ vào những thùng kia", "emoji": "💥", "color": "#ff3333"},
+    'cardboard': {"bin": "Tái chế (Giấy/Bìa) nên bỏ vào thùng rác tái chế", "emoji": "📰", "color": "#00cc66"},
+    'paper': {"bin": "Tái chế (Giấy) nên bỏ vào thùng rác tái chế", "emoji": "📰", "color": "#00cc66"},
+    'glass': {"bin": "Tái chế (Thủy tinh) nên bỏ vào thùng rác tái chế", "emoji": "🥂", "color": "#ffcc00"},
+    'recyclable metal': {"bin": "Tái chế (Kim loại) nên bỏ vào thùng rác tái chế", "emoji": "⚙️", "color": "#9999ff"},
+    'clothes': {"bin": "Quần áo nên từ thiện hoặc cho đi, còn không thì nên vứt vào thùng rác vô cơ", "emoji": "🗑️", "color": "#999999"}, 
+    'shoes': {"bin": "Giày dép nên từ thiện hoặc cho đi, còn không thì nên vứt vào thùng rác vô cơ", "emoji": "🗑️", "color": "#999999"},
+    'organic': {"bin": "Rác hữu cơ nên bỏ vào thùng rác hữu cơ", "emoji": "🥬", "color": "#ff6600"},
+}
+
+
 @st.cache_resource
 def load_efficientnet_b0(repo_id, filename, num_classes, device):
     try:
@@ -58,6 +85,7 @@ def load_efficientnet_b0(repo_id, filename, num_classes, device):
     model.eval()
     return model
 
+
 def preprocess_image(image: np.ndarray):
     transform = transforms.Compose([
         transforms.ToPILImage(),
@@ -67,6 +95,7 @@ def preprocess_image(image: np.ndarray):
                              [0.229, 0.224, 0.225])
     ])
     return transform(image).unsqueeze(0)
+
 
 def classify(image_input, classification_model, class_names, device):
     if isinstance(image_input, Image.Image):
@@ -105,6 +134,7 @@ try:
 except Exception as e:
     st.error(f"Failed to initialize model. Please check the Hugging Face path. Error: {e}")
     st.stop()
+
 
 def get_base64_of_bin_file(bin_file):
     if not os.path.exists(bin_file):
@@ -174,7 +204,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("♻️ EnviroVision - Demo AI phân loại rác by Hải and Phát 11A5")
+st.title("♻️ EnviroVision - AI phân loại rác")
 uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
 
 conf_threshold = 0.0
@@ -190,32 +220,19 @@ if st.button("Chạy nhận diện") and uploaded_file is not None:
             st.image(result_img, caption="Kết quả phân loại", use_container_width=True)
 
             VIETNAMESE_LABELS = {
-                "HDPE": "Nhựa HDPE",
-                "LDPE": "Nhựa LDPE",
-                "Other plastic": "Nhựa khác",
-                "PET": "Nhựa PET",
-                "PP": "Nhựa PP",
-                "PS": "Nhựa PS",
-                "PVC": "Nhựa PVC",
-                "aerosol": "Bình xịt",
-                "battery": "Pin/ắc quy",
-                "cardboard": "Bìa cứng",
-                "charger": "Sạc điện thoại/máy tính",
-                "clothes": "Quần áo",
-                "computer": "Thiết bị điện tử",
-                "glass": "Thủy tinh",
-                "keyboard": "Bàn phím",
-                "mouse": "Chuột máy tính",
-                "organic": "Rác hữu cơ",
-                "paper": "Giấy",
-                "phone": "Điện thoại",
-                "recyclable metal": "Kim loại tái chế",
-                "remote control": "Điều khiển",
-                "shoes": "Giày dép",
+                "HDPE": "Nhựa HDPE", "LDPE": "Nhựa LDPE", "Other plastic": "Nhựa khác", "PET": "Nhựa PET",
+                "PP": "Nhựa PP", "PS": "Nhựa PS", "PVC": "Nhựa PVC", "aerosol": "Bình xịt",
+                "battery": "Pin/ắc quy", "cardboard": "Bìa cứng", "charger": "Sạc điện thoại/máy tính",
+                "clothes": "Quần áo", "computer": "Thiết bị điện tử", "glass": "Thủy tinh",
+                "keyboard": "Bàn phím", "mouse": "Chuột máy tính", "organic": "Rác hữu cơ",
+                "paper": "Giấy", "phone": "Điện thoại", "recyclable metal": "Kim loại tái chế",
+                "remote control": "Điều khiển", "shoes": "Giày dép",
             }
 
             st.subheader("Kết quả phân loại:")
             for label, conf, _ in results:
+                bin_info = TRASH_BIN_MAP.get(label, {"bin": "Không xác định", "emoji": "❓", "color": "#ff0000"})
+                
                 color = "rgb(0, 255, 0)"
                 vietnamese_name = VIETNAMESE_LABELS.get(label, label)
                 
@@ -232,5 +249,28 @@ if st.button("Chạy nhận diện") and uploaded_file is not None:
                     """,
                     unsafe_allow_html=True
                 )
+                
+                st.markdown(
+                    f"""
+                    <div style="
+                        background-color: {bin_info['color']}20; 
+                        border-left: 5px solid {bin_info['color']}; 
+                        padding: 10px; 
+                        margin-top: 10px; 
+                        border-radius: 5px;
+                    ">
+                        <p style="
+                            font-weight: bold; 
+                            font-size: 18px; 
+                            color: {bin_info['color']}; 
+                            margin: 0;
+                        ">
+                            {bin_info['emoji']} Bỏ vào thùng: {bin_info['bin']}
+                        </p>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+                
         except Exception as e:
             st.error(f"❌ Lỗi trong quá trình phân loại: {e}")
