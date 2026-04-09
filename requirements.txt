@@ -3,7 +3,7 @@ torch
 torchvision
 pillow
 huggingface_hub
-numpy
+numpy<2
 timm
 
 opencv-python-headless==4.9.0.80
