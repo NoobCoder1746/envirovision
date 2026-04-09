@@ -1,9 +1,15 @@
-﻿streamlit
-ultralytics
+streamlit
 torch
 torchvision
 pillow
-opencv-python-headless
 huggingface_hub
 numpy
 timm
+
+opencv-python-headless==4.9.0.80
+
+ultralytics --no-deps
+matplotlib
+pyyaml
+scipy
+requests
