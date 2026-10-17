@@ -146,7 +146,7 @@ def get_base64_of_bin_file(bin_file):
     return base64.b64encode(data).decode()
 
 
-background_path = "realfish-Kh8aGCgWZLg-unsplash.jpg"
+background_path = "images (4).jpeg"
 base64_bg = get_base64_of_bin_file(background_path)
 
 st.markdown(
