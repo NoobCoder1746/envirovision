@@ -206,7 +206,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("♻️ EnviroVision - Demo AI phân loại rác")
+st.title("♻️ AI phân loại rác")
 uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
 
 conf_threshold = 0.0
