@@ -5,4 +5,5 @@ pillow
 huggingface_hub
 numpy<2
 timm
+opencv-python-headless
 ultralytics
