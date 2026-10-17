@@ -1,16 +1,6 @@
 import streamlit as st
 import subprocess
 import sys
-try:
-  import cv2
-except Exception:
-  try:
-    subprocess.run(
-        [sys.executable, "-m", "pip", "uninstall", "-y", "opencv-python"],
-        check=True,
-    )
-  except Exception:
-    pass
 import cv2
 import torch
 import torch.nn as nn
